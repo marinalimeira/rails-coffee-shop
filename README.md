@@ -12,7 +12,7 @@ Com estas funcionalidades, temos um _CRUD_ (_Create_, _Read_, _Update_, _Delete_
 
 Diagrama do Banco de Dados:
 
-!(Diagrama do Banco de Dados)[docs/db_diagram.png]
+![Diagrama do Banco de Dados](docs/db_diagram.png)
 
 ## Tutorial
 
