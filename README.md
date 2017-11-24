@@ -337,7 +337,7 @@ Como eu defini que a rota vai pra `purchases#new`, teremos um novo controller, c
 
 Antes de tratar essa requisição, temos que definir o relacionamento entre `Purchase` e `Product`.
 
-Sabemos que um `Product` **possui vários** `Purchase** e um `Purchase` **pertence a** um `Product`. O `ActiveRecord` possui métodos pra gente traduzir isso e adicionar aos _models_. Isso nos dará alguns métodos novos, como `Product#purchases` e `Purchase#product`.
+Sabemos que um `Product` **possui vários** `Purchase` e um `Purchase` **pertence a** um `Product`. O `ActiveRecord` possui métodos pra gente traduzir isso e adicionar aos _models_. Isso nos dará alguns métodos novos, como `Product#purchases` e `Purchase#product`.
 
 Em [app/models/product.rb](app/models/product.rb):
 
