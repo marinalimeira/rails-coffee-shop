@@ -125,16 +125,17 @@ A execução dessa _rake_ altera o nosso arquivo [db/schema.rb](db/schema.rb). E
 
 Agora que temos os modelos criados e definidos, é possível utilizar o _Rails Console_ parar adicionar dados ao banco.
 
-```
-$ rails console
-```
-
 ```bash
+$ rails console
 irb(main):001:0> Product.create(weight: 250, roast: 'dark', ground: 'medium', price: 22, quantity: 200)
   (0.1ms)  begin transaction
-  SQL (0.3ms)  INSERT INTO "products" ("weight", "roast", "ground", "price", "quantity", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["weight", 250], ["roast", "dark"], ["ground", "medium"], ["price", 22.0], ["quantity", 200], ["created_at", "2017-11-24 00:21:17.081579"], ["updated_at", "2017-11-24 00:21:17.081579"]]
+  SQL (0.3ms)  INSERT INTO "products" ("weight", "roast", "ground", "price", "quantity", "created_at",
+  "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["weight", 250], ["roast", "dark"], ["ground", "medium"],
+  ["price", 22.0], ["quantity", 200], ["created_at", "2017-11-24 00:21:17.081579"], ["updated_at",
+  "2017-11-24 00:21:17.081579"]]
   (47.8ms)  commit transaction
-=> #<Product id: 1, weight: 250, roast: "dark", ground: "medium", price: 22.0, quantity: 200, created_at: "2017-11-24 00:21:17", updated_at: "2017-11-24 00:21:17">
+=> #<Product id: 1, weight: 250, roast: "dark", ground: "medium", price: 22.0, quantity: 200, created_at:
+"2017-11-24 00:21:17", updated_at: "2017-11-24 00:21:17">
 ```
 
 E todas essas alterações são conteúdo para mais um commit ~:D é bom sempre checar a situação atual utilizando o `git status`.
@@ -158,11 +159,11 @@ $ git add .
 $ git commit -m "Adicionados modelos de product e purchase"
 ```
 
-## Listagem do estoque
+### Listagem do estoque
 
 Para construir (agora de verdade) a aplicação, iremos começar pela definição das rotas. Rotas são basicamente as URLs que permitem que a gente acesse diferentes páginas da aplicação.
 
-As rotas são definidas no arquivo [config/routes.rb](config/routes.rb). Como já sabemos que queremos fazer um CRUD para `product` (que é o café :heart:), utilizaremos um método chamado `resources`, que nos permite gerar rotas para essas ações ([mais sobre rotas nos guias do Rails](http://guides.rubyonrails.org/routing.html#resources-on-the-web)). Ao gerar os _resources_ para `product`, podemos ver quais são as rotas disponíveis no sistema:
+As rotas são definidas no arquivo [config/routes.rb](config/routes.rb). Como já sabemos que queremos fazer um CRUD para `product` (que é o café :heart:), utilizaremos um método chamado `resources`, que nos permite gerar rotas para essas ações ([mais sobre rotas no guias do Rails](http://guides.rubyonrails.org/routing.html#resources-on-the-web)). Ao gerar os _resources_ para `product`, podemos ver quais são as rotas disponíveis no sistema:
 
 ```
 $ rake routes
@@ -210,7 +211,7 @@ Iremos (novamente) ignorar os arquivos gerados na pasta `/test`. O conteúdo da 
 
 O arquivo gerado em `app/helper` é utilizado para colocarmos lógica da _view_ que não queremos que fique no HTML nem no _model_ (que é onde algumas pessoas acabam colocando).
 
-Por hora, iremos mexer no arquivo gerado em `app/controllers` e criaremos arquivos HTML em `app/views/coffee`.
+Por hora, iremos mexer no arquivo gerado em `app/controllers` e criaremos arquivos HTML em `app/views/products`.
 
 A primeira ação que iremos construir é a de listar. Aproveitaremos os registros criados através do _rails console_ para ter algo pra mostrar.
 
@@ -265,7 +266,7 @@ Antes de editar o arquivo, teremos que instalar a gem. Para isso, é só seguir 
 
 Voltando ao arquivo, criamos um formulário seguindo os [passos iniciais indicados no repositório](https://github.com/plataformatec/simple_form#usage). **Fica como dever de casa customizar mais esse formulário! Uma coisa legal seria fazer os campos de _ground_ e _roast_ serem um select, já que são especificações pré-definidas (e.g. a torra pode ser clara, média ou escura).**
 
-```
+```ruby
 <%= simple_form_for @product do |f| %>
   <%= f.input :weight %>
   <%= f.input :roast %>
@@ -276,11 +277,11 @@ Voltando ao arquivo, criamos um formulário seguindo os [passos iniciais indicad
 <% end %>
 ```
 
-Ao clicar no botão de enviar, irá retornar um erro pois o form faz uma requisição para uma rota do tipo **POST** do formulário. Isso acontece pois o objeto em `@coffee` ainda não foi persistido - ele não possui um `id` -, caso contrário, a requisição iria para a rota em **PUT/PATCH**.
+Ao clicar no botão de enviar, irá retornar um erro pois o form faz uma requisição para uma rota do tipo **POST** do formulário. Isso acontece pois o objeto em `@product` ainda não foi persistido - ele não possui um `id` -, caso contrário, a requisição iria para a rota em **PUT/PATCH**.
 
 Antes de criar um registro no banco com os dados do formulário, por questões de segurança, iremos utilizar o [strong params](http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters) para validar as keys dos parâmetros, isso impede que atributos mais sensiveis do modelo sejam atualizados. Para isso:
 
-```
+```ruby
 def product_params
   params.require(:product).permit(:weight, :roast, :ground, :price, :quantity)
 end
@@ -288,7 +289,7 @@ end
 
 O retorno desse método é um `Hash`, que conseguimos passar como parâmetros para o `Product.new` ou `Product.create`.
 
-```
+```ruby
 def create
   @product = Product.new(product_params)
 
@@ -297,7 +298,7 @@ def create
     # se der tudo ok, a gente redireciona pra listagem. ~lição de casa: adicionar flash messages
     redirect_to products_path
   else
-    # irá renderizar o conteúdo de 'new', mas como o objeto `@product` possui coisas em `@product.errors`, algumas mensagens de erro serão renderizadas.
+    # irá renderizar o conteúdo de 'new', mas como o objeto `@product` possui coisas em `@product.errors`, algumas mensagens de erro serão renderizadas (mas por enquanto não vai cair aqui porque o model não possui nenhuma validação).
     render :new
   end
 end
@@ -308,218 +309,161 @@ Com isso, temos outro commit ~:D mais uma vez:
 
 ```
 $ git add .
-$ git commit -m "Adicionado formulário e acao de persistencia de Coffee"
+$ git commit -m "Adicionado formulario e acao de persistencia de Product"
 ```
 
 ### Atualizar o estoque
 
-A nossa ação de atualizar o estoque irá acontecer ao realizar uma venda ou pela chegada de mercadoria nova. No primeiro caso, iremos registrar as adições como uma venda. Para isso, já temos o _model_ da venda criado, que é o MODEL AAAA NAO SEI O NOME.
+A nossa ação de atualizar o estoque irá acontecer ao realizar uma venda ou pela chegada de mercadoria nova. No primeiro caso, iremos registrar as adições como uma venda. Para isso, já temos o _model_ da venda criado, que é o `Purchase`.
 
 O fluxo será:
 
 - abrir página para realizar uma venda;
-- atualizar o modelo de `Coffee` e criar um novo registro em VENDA;
+- atualizar o _model_ de `Product` e criar um novo registro em `purchases`;
 
-**TK** mostrar print da telaaa
+**Notas.:** quando eu me referir ao _model_, normalmente irei me referir como `Purchase`, por ser a classe que está em [app/models/](app/models/), já quando eu me referir a tabela criada no banco, é `purchases`.
 
-(Sim, sem CSS. Fica como lição de casa adicionar [Twitter Bootstrap](https://getbootstrap.com/) ou outra coisa legal)
+Para a primeira etapa, iremos criar uma rota para acessarmos `products/<id>/purchase`. Voltando ao arquivo [config/routes.rb](config/routes.rb), iremos adicionar uma requisição **GET** a essa URL:
 
-Para a primeira etapa, iremos criar uma rota para acessarmos `coffees/<id>/purchase`. Voltando ao arquivo `config/routes.rb`, iremos adicionar uma requisição GET a essa URL:
-
-```
-resources do
-/:id/purchase
+```ruby
+resources :products do
+  get 'purchase', to: 'purchases#new', as: :new_purchase
 end
 ```
 
-Pela estrutura da rota?? - no controller iremos acessar a key `:id` em `params`.
+Se você executar `$ rake routes` novamente, verá as configurações dessa nova rota!
 
+Como eu defini que a rota vai pra `purchases#new`, teremos um novo controller, chamado `PurchasesController` que irá receber essas requisições no método `new`. Sabendo que a compra pertence a um produto, teremos sempre que salvar o `:product_id` para persistir junto ao `Purchase`.
 
-criar controller
-```
-def show
-  @coffee = Coffee.find(params[:id])
+Antes de tratar essa requisição, temos que definir o relacionamento entre `Purchase` e `Product`.
+
+Sabemos que um `Product` **possui vários** `Purchase** e um `Purchase` **pertence a** um `Product`. O `ActiveRecord` possui métodos pra gente traduzir isso e adicionar aos _models_. Isso nos dará alguns métodos novos, como `Product#purchases` e `Purchase#product`.
+
+Em [app/models/product.rb](app/models/product.rb):
+
+```ruby
+class Product < ApplicationRecord
+  has_many :purchases
 end
 ```
 
-Iremos carregar essa variável em uma tela que contém todas as informações do produto, junto com um formulário para realizarmos a venda.
+E em [app/models/purchase.rb](app/models/purchase.rb):
 
-SHOW NA VDD:
+```ruby
+class Purchase < ApplicationRecord
+  belongs_to :product
+end
+```
 
-a página contem todas as infos,
-carrega campo de quantidade
-salva
-sucesso
+Agora podemos voltar ao controller! Criaremos o [app/controller/purchases_controller.rb](app/controller/purchases_controller.rb) (você pode utilizar o gerador ou criar um arquivo novo, ur call).
 
+Uma diferença em relação ao `ProductsController` é que sempre iremos realizar ações que são de um `Product`, ou seja, sempre precisaremos de um `product_id` em `Purchase`. Para isso, utilizaremos o `:product_id` que vem dos parâmetros e criaremos uma variável de instância no _controller_.
 
+```ruby
+def set_product
+  @product = Product.find(params[:product_id])
+end
+```
 
+O método `Product.find` faz a seguinte query:
 
+```sql
+SELECT * FROM products WHERE id=<product_id>
+```
 
+Para executar o método `set_product` antes da execução de todos os métodos, adicionamos no começo do arquivo:
 
+```ruby
+before_action :set_product
+```
 
-# todo - nao pode salvar pelo form, quantidades negativas. 
+Assim, o método `new` ficará do mesmo jeito que fizemos em `ProductsController`.
 
+```ruby
+def new
+  @purchase = Purchase.new
+end
+```
 
+A tela dessa ação será um formulário com apenas um campo, quantidade - que não pode ser negativa, afinal, a gente não vende -5 sacos de café. A rota desse formulário iremos definir manualmente, porque por padrão, a rota utilizada seria `purchase_path`, mas como essa rota não existe (vide `$ rake routes`), iremos criar uma e adicioná-la ao formulário.
 
+Em [config/routes.rb](config/routes.rb) (e dentro de `resources :products`):
 
-(ver resultado final - mandar links)
+```ruby
+post 'purchase', to: 'purchases#create', as: :create_purchase
+```
 
-Para visualizar esses dados, 
+Em [app/views/purchases/new.html.erb](app/views/purchases/new.html.erb):
 
+```
+<%= simple_form_for @purchase, url: products_create_purchase_path(@product) do |f| %>
+  <%= f.input :quantity %>
+  <%= f.button :submit %>
+<% end %>
+```
 
+Pra acompanhar os erros que deveriam acontecer, crie a rota apenas após tentar criar o formulário sem definir a rota, para ver a mensagem que o Rails retorna.
 
+No controller, criaremos um método de _create_ assim como em `ProductsController`, mas dessa vez, queremos criar um `Purchase` com um `Product` associado. Já que definimos o `@product` no `before_action`, teremos sempre acesso a esse objeto.
 
+```
+def create
+  @purchase = Purchase.new(purchase_params)
+  @purchase.product = @product
 
+  # if save [...]
+  # em caso de sucesso, redirecionamos para products_path porque *ainda* não temos outra tela.
+end
 
+private
 
+def purchase_params
+  params.require(:purchase).permit(:quantity)
+end
+```
 
+Agora tudo ok :tada:! Conseguimos realizar vendas para cada produto. Rode o servidor (se já não tiver o feito - deveria, na verdade) e teste valores aleatórios e veja se está tudo sendo persistido através do _rails console_.
 
+Só que a ação de venda não ocorre como esperávamos, por dois motivos: conseguimos vender produtos com quantidades negativas e o nosso estoque não está sendo atualizado.
 
+Adicionamos a validação no _model_ de `Purchases` ([app/models/purchases.rb](app/models/purchases.rb)):
 
+```
+validates :quantity, numericality: { only_integer: true, greater_than: 0 }
+```
 
+[Mais sobre validações no guia do Rails](http://edgeguides.rubyonrails.org/active_record_validations.html).
 
+Para persistirmos de maneira correta o `Purchase`, iremos alterar o _controller_ para fazer todas as ações (o certo seria fazer em um _service_ ou afins).
 
+```
+def create
+  @purchase = Purchase.new(purchase_params)
+  @purchase.product = @product
+  @purchase.total_price = (@product.price * @purchase.quantity)
 
+  @product.quantity = (@product.quantity - @purchase.quantity)
+  @product.save
 
+  if @purchase.save
+    redirect_to products_path
+  else
+    render :new
+  end
+end
+```
 
+**Outra lição de casa: conseguimos salvar o Product com quantidades negativas, é uma boa adicionar essa validação também! Você fazer um `before_save` no model `Purchase` pra validar se a quantidade em `Product` é maior ou igual a quantidade que você deseja salvar, se não, adiciona o erro em `Purchase#quantity` avisando que essa quantidade é inválida ([mais detalhes em ActiveModel::Errors#add](http://api.rubyonrails.org/classes/ActiveModel/Errors.html#method-i-add)).**
 
+## TODO:
+- ProductsController#show (com listagem de Product#purchases);
+- ProductsController#delete (excluindo também todos os Product#purchases).
+- BONUSSSS - UPLOAD DE IMAGEM
 
 
+Muito do que fizemos aqui pode ser resumido com um `$ rails generate scaffold`, mas é muita mágica e eu não utilizar isso te ajuda entender melhor como as coisas funcionam :)
 
+## Outros recursos:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-BONUSSSS - UPLOAD DE IMAGEMkkk
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Tudo que fizemos aqui pode ser resumido com um `$ rails generate scaffold`, mas é muita mágica e eu não utilizar isso te ajuda entender melhor como as coisas funcionam :)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Outros recursos:
-
-- tutorial rails girls
-
-PERCISO DAR MERGE NO NEGOCIO DO MAUJOR
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- [Tutorial do Rails Girls - em pt!](http://guides.railsgirls.com/guides-ptbr/)
 
