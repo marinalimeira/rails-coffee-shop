@@ -159,7 +159,7 @@ $ git add .
 $ git commit -m "Adicionados modelos de product e purchase"
 ```
 
-### Listagem do estoque
+## Listando do estoque
 
 Para construir (agora de verdade) a aplicação, iremos começar pela definição das rotas. Rotas são basicamente as URLs que permitem que a gente acesse diferentes páginas da aplicação.
 
@@ -355,7 +355,7 @@ class Purchase < ApplicationRecord
 end
 ```
 
-Agora podemos voltar ao controller! Criaremos o [app/controller/purchases_controller.rb](app/controller/purchases_controller.rb) (você pode utilizar o gerador ou criar um arquivo novo, ur call).
+Agora podemos voltar ao controller! Criaremos o [app/controllers/purchases_controller.rb](app/controllers/purchases_controller.rb) (você pode utilizar o gerador ou criar um arquivo novo, ur call).
 
 Uma diferença em relação ao `ProductsController` é que sempre iremos realizar ações que são de um `Product`, ou seja, sempre precisaremos de um `product_id` em `Purchase`. Para isso, utilizaremos o `:product_id` que vem dos parâmetros e criaremos uma variável de instância no _controller_.
 
@@ -368,7 +368,7 @@ end
 O método `Product.find` faz a seguinte query:
 
 ```sql
-SELECT * FROM products WHERE id=<product_id>
+SELECT * FROM products WHERE id=<product_id>;
 ```
 
 Para executar o método `set_product` antes da execução de todos os métodos, adicionamos no começo do arquivo:
@@ -395,18 +395,18 @@ post 'purchase', to: 'purchases#create', as: :create_purchase
 
 Em [app/views/purchases/new.html.erb](app/views/purchases/new.html.erb):
 
-```
+```html
 <%= simple_form_for @purchase, url: products_create_purchase_path(@product) do |f| %>
   <%= f.input :quantity %>
   <%= f.button :submit %>
 <% end %>
 ```
 
-Pra acompanhar os erros que deveriam acontecer, crie a rota apenas após tentar criar o formulário sem definir a rota, para ver a mensagem que o Rails retorna.
+**Pra acompanhar os erros que deveriam acontecer, crie a rota apenas após tentar criar o formulário sem definir a rota, para ver a mensagem que o Rails retorna.**
 
-No controller, criaremos um método de _create_ assim como em `ProductsController`, mas dessa vez, queremos criar um `Purchase` com um `Product` associado. Já que definimos o `@product` no `before_action`, teremos sempre acesso a esse objeto.
+No _controller_, criaremos um método de _create_ assim como em `ProductsController`, mas dessa vez, queremos criar um `Purchase` com um `Product` associado. Já que definimos o `@product` no `before_action`, teremos sempre acesso a esse objeto.
 
-```
+```ruby
 def create
   @purchase = Purchase.new(purchase_params)
   @purchase.product = @product
@@ -428,7 +428,7 @@ Só que a ação de venda não ocorre como esperávamos, por dois motivos: conse
 
 Adicionamos a validação no _model_ de `Purchases` ([app/models/purchases.rb](app/models/purchases.rb)):
 
-```
+```ruby
 validates :quantity, numericality: { only_integer: true, greater_than: 0 }
 ```
 
@@ -436,7 +436,7 @@ validates :quantity, numericality: { only_integer: true, greater_than: 0 }
 
 Para persistirmos de maneira correta o `Purchase`, iremos alterar o _controller_ para fazer todas as ações (o certo seria fazer em um _service_ ou afins).
 
-```
+```ruby
 def create
   @purchase = Purchase.new(purchase_params)
   @purchase.product = @product
