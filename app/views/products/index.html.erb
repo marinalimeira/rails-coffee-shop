@@ -1,0 +1,18 @@
+<table>
+  <tr>
+    <th>Tipo de torra</th>
+    <th>Moagem</th>
+    <th>Peso</th>
+    <th>Preço</th>
+    <th>Quantidade em estoque</th>
+  </tr>
+  <% @products.each do |product| %>
+    <tr>
+      <td><%= product.ground %></td>
+      <td><%= product.roast %></td>
+      <td><%= product.weight %></td>
+      <td><%= product.price %></td>
+      <td><%= product.quantity %></td>
+    <tr>
+  <% end %>
+</table>
