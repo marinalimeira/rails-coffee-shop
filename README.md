@@ -4,9 +4,9 @@ O projeto contido neste repositório é um gerenciador o estoque de lojas de caf
 
 - Listagem do estoque;
 - Adicionar um item no estoque;
-- Atualizar os dados de um item no estoque;
 - Atualizar a quantidade em estoque (uma compra foi realizada, salvamos a compra também);
-- Excluir um item do estoque;
+- (todo) Atualizar os dados de um item no estoque;
+- (todo) Excluir um item do estoque;
 
 Com estas funcionalidades, temos um **_CRUD_** (_Create_, _Read_, _Update_, _Delete_), que em **_SQL_** é referente as operações _Create_, _Select_, _Update_ e _Delete_ e em **_REST_** temos o _GET_, _POST_, _PUT/PATCH_ e _DELETE_.
 
@@ -22,7 +22,7 @@ Diagrama do Banco de Dados:
 
 **1. Git e GitHub**
 
-Você precisará ter o Git instalado em seu sistema operacional para versionar o código deste workshop. Utilize este link para instalar o Git no seu S.O.: [Installing Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+Você precisará ter o [Git instalado](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) em seu sistema operacional para versionar o código deste workshop.
 
 **2. Conhecimento básico em Ruby**
 
@@ -89,7 +89,7 @@ Serão criadas também as colunas `id`, `created_at` e `updated_at`, que são ge
 
 Temos vários tipos de dados, onde definimos o tipo de cada atributo na criação do modelo - quando não especificamos nenhum, o tipo `string` é utilizado.
 
-**Obs.:** _Rails_ possui muitas configurações que são feitas através de [convenções](http://rubyonrails.org/doctrine/#convention-over-configuration), por isso iremos construir todas as _models_, _controllers_ etc em inglês. Como o plural em português é bem diferente do jeito que é feito em inglês as coisas ficariam bem confusas se fizéssemos em português (e.g. se tivermos um modelo "papel" teríamos que criar uma tabela chamada "papels").
+**Notas:** _Rails_ possui muitas configurações que são feitas através de [convenções](http://rubyonrails.org/doctrine/#convention-over-configuration), por isso iremos construir todas as _models_, _controllers_ etc em inglês. Como o plural em português é bem diferente do jeito que é feito em inglês as coisas ficariam bem confusas se fizéssemos em português (e.g. se tivermos um modelo "papel" teríamos que criar uma tabela chamada "papels").
 
 A saída desse comando vai ser algo parecido com isso:
 
@@ -107,7 +107,7 @@ Iremos ignorar o que foi criado na pasta `test`, já que não iremos falar sobre
 
 A migração gerada contem um script do `ActiveRecord` para criar a tabela `products` e seus atributos. Esse monte de número no início do nome do arquivo é o _timestamp_ do momento da criação da migração.
 
-O arquivo do model [app/models/product.rb](app/models/product.rb) só contem a definição da classe. É nesse arquivo que iremos - em alguns instantes - definir os relacionamentos e as validações referentes a entidade `product`.
+O arquivo do model [app/models/product.rb](rails/app/models/product.rb) só contem a definição da classe. É nesse arquivo que iremos - em alguns instantes - definir os relacionamentos e as validações referentes a entidade `product`.
 
 Repetiremos os mesmos passos para criar um modelo de `purchase`:
 
@@ -121,7 +121,7 @@ Para efetuar essas alterações, utilizaremos uma rake:
 $ rake db:migrate
 ```
 
-A execução dessa _rake_ altera o nosso arquivo [db/schema.rb](db/schema.rb). Esse arquivo sempre vai conter um esqueleto da situação atual do banco, então todas as migrações que alteram o banco serão refletidas nesse arquivo.
+A execução dessa _rake_ altera o nosso arquivo [db/schema.rb](rails/db/schema.rb). Esse arquivo sempre vai conter um esqueleto da situação atual do banco, então todas as migrações que alteram o banco serão refletidas nesse arquivo.
 
 Agora que temos os modelos criados e definidos, é possível utilizar o _Rails Console_ parar adicionar dados ao banco.
 
@@ -163,7 +163,7 @@ $ git commit -m "Adicionados modelos de product e purchase"
 
 Para construir (agora de verdade) a aplicação, iremos começar pela definição das rotas. Rotas são basicamente as URLs que permitem que a gente acesse diferentes páginas da aplicação.
 
-As rotas são definidas no arquivo [config/routes.rb](config/routes.rb). Como já sabemos que queremos fazer um CRUD para `product` (que é o café :heart:), utilizaremos um método chamado `resources`, que nos permite gerar rotas para essas ações ([mais sobre rotas no guias do Rails](http://guides.rubyonrails.org/routing.html#resources-on-the-web)). Ao gerar os _resources_ para `product`, podemos ver quais são as rotas disponíveis no sistema:
+As rotas são definidas no arquivo [config/routes.rb](rails/config/routes.rb). Como já sabemos que queremos fazer um CRUD para `product` (que é o café :heart:), utilizaremos um método chamado `resources`, que nos permite gerar rotas para essas ações ([mais sobre rotas no guias do Rails](http://guides.rubyonrails.org/routing.html#resources-on-the-web)). Ao gerar os _resources_ para `product`, podemos ver quais são as rotas disponíveis no sistema:
 
 ```
 $ rake routes
@@ -215,7 +215,7 @@ Por hora, iremos mexer no arquivo gerado em `app/controllers` e criaremos arquiv
 
 A primeira ação que iremos construir é a de listar. Aproveitaremos os registros criados através do _rails console_ para ter algo pra mostrar.
 
-Em [app/controllers/products_controller.rb](app/controllers/products_controller.rb), criaremos um método `index` (igual aquele definido nas rotas) e iremos carregar todos os registros salvos no banco:
+Em [app/controllers/products_controller.rb](rails/app/controllers/products_controller.rb), criaremos um método `index` (igual aquele definido nas rotas) e iremos carregar todos os registros salvos no banco:
 
 ```ruby
 def index
@@ -231,7 +231,7 @@ SELECT * FROM products;
 
 Adicionamos esses registros à uma variável `@products`, que possui esse `@` por ser uma variável de instância ([mais sobre variáveis de classe e instância aqui](https://blog.guilhermegarnier.com/2014/02/variaveis-de-classe-e-de-instancia-de-classe-em-ruby/)) e conseguimos acessá-la na _view_.
 
-Por padrão, depois de processar o _SELECT_, irá redirecionar método para um arquivo em `app/views/<nome do controller>/<nome da ação>.html.erb`, que no nosso caso é [app/views/products/index.html.erb](app/views/products/index.html.erb). Os arquivos HTML com extensão `.erb` (Embedded RuBy) nos permitem utilizar código Ruby dentro do HTML com a ajuda de `<%= %>` ([mais sobre ActionView templates aqui](http://api.rubyonrails.org/classes/ActionView/Base.html)).
+Por padrão, depois de processar o _SELECT_, irá redirecionar método para um arquivo em `app/views/<nome do controller>/<nome da ação>.html.erb`, que no nosso caso é [app/views/products/index.html.erb](rails/app/views/products/index.html.erb). Os arquivos HTML com extensão `.erb` (Embedded RuBy) nos permitem utilizar código Ruby dentro do HTML com a ajuda de `<%= %>` ([mais sobre ActionView templates aqui](http://api.rubyonrails.org/classes/ActionView/Base.html)).
 
 Todas alterações que fizemos na listagem também são conteúdo para mais um commit! Podemos adicionar todos os arquivos e fazer um novo commit com os seguintes comandos:
 ```
@@ -260,7 +260,7 @@ end
 
 Repare que agora temos uma variável `@product`, que como armazena apenas um objeto de `Product` - ao invés de `@products` que armazenava um _array_ -, temos uma variável no singular. Isso irá ajudar na leitura do código, onde uma variável no singular guarda somente um elemento e uma variável no plural guarda um array (apenas convenção, isso não muda nada pro interpretador).
 
-Para criar o formulário, iremos editar o arquivo [app/views/products/new.html.erb](app/views/products/new.html.erb) e utilizaremos a _gem_ [SimpleForm](https://github.com/plataformatec/simple_form) para poder criar um formulário.
+Para criar o formulário, iremos editar o arquivo [app/views/products/new.html.erb](rails/app/views/products/new.html.erb) e utilizaremos a _gem_ [SimpleForm](https://github.com/plataformatec/simple_form) para poder criar um formulário.
 
 Antes de editar o arquivo, teremos que instalar a gem. Para isso, é só seguir os [passos de instalação que estão no repositório do SimpleForm](https://github.com/plataformatec/simple_form#installation) - e isso já é conteúdo para outro commit.
 
@@ -312,7 +312,7 @@ $ git add .
 $ git commit -m "Adicionado formulario e acao de persistencia de Product"
 ```
 
-### Atualizar o estoque
+## Atualizando o estoque
 
 A nossa ação de atualizar o estoque irá acontecer ao realizar uma venda ou pela chegada de mercadoria nova. No primeiro caso, iremos registrar as adições como uma venda. Para isso, já temos o _model_ da venda criado, que é o `Purchase`.
 
@@ -321,9 +321,9 @@ O fluxo será:
 - abrir página para realizar uma venda;
 - atualizar o _model_ de `Product` e criar um novo registro em `purchases`;
 
-**Notas.:** quando eu me referir ao _model_, normalmente irei me referir como `Purchase`, por ser a classe que está em [app/models/](app/models/), já quando eu me referir a tabela criada no banco, é `purchases`.
+**Notas.:** quando eu me referir ao _model_, normalmente irei me referir como `Purchase`, por ser a classe que está em [app/models/](rails/app/models/), já quando eu me referir a tabela criada no banco, é `purchases`.
 
-Para a primeira etapa, iremos criar uma rota para acessarmos `products/<id>/purchase`. Voltando ao arquivo [config/routes.rb](config/routes.rb), iremos adicionar uma requisição **GET** a essa URL:
+Para a primeira etapa, iremos criar uma rota para acessarmos `products/<id>/purchase`. Voltando ao arquivo [config/routes.rb](rails/config/routes.rb), iremos adicionar uma requisição **GET** a essa URL:
 
 ```ruby
 resources :products do
@@ -339,7 +339,7 @@ Antes de tratar essa requisição, temos que definir o relacionamento entre `Pur
 
 Sabemos que um `Product` **possui vários** `Purchase` e um `Purchase` **pertence a** um `Product`. O `ActiveRecord` possui métodos pra gente traduzir isso e adicionar aos _models_. Isso nos dará alguns métodos novos, como `Product#purchases` e `Purchase#product`.
 
-Em [app/models/product.rb](app/models/product.rb):
+Em [app/models/product.rb](rails/app/models/product.rb):
 
 ```ruby
 class Product < ApplicationRecord
@@ -347,7 +347,7 @@ class Product < ApplicationRecord
 end
 ```
 
-E em [app/models/purchase.rb](app/models/purchase.rb):
+E em [app/models/purchase.rb](rails/app/models/purchase.rb):
 
 ```ruby
 class Purchase < ApplicationRecord
@@ -355,7 +355,7 @@ class Purchase < ApplicationRecord
 end
 ```
 
-Agora podemos voltar ao controller! Criaremos o [app/controllers/purchases_controller.rb](app/controllers/purchases_controller.rb) (você pode utilizar o gerador ou criar um arquivo novo, ur call).
+Agora podemos voltar ao controller! Criaremos o [app/controllers/purchases_controller.rb](rails/app/controllers/purchases_controller.rb) (você pode utilizar o gerador ou criar um arquivo novo, ur call).
 
 Uma diferença em relação ao `ProductsController` é que sempre iremos realizar ações que são de um `Product`, ou seja, sempre precisaremos de um `product_id` em `Purchase`. Para isso, utilizaremos o `:product_id` que vem dos parâmetros e criaremos uma variável de instância no _controller_.
 
@@ -387,13 +387,13 @@ end
 
 A tela dessa ação será um formulário com apenas um campo, quantidade - que não pode ser negativa, afinal, a gente não vende -5 sacos de café. A rota desse formulário iremos definir manualmente, porque por padrão, a rota utilizada seria `purchase_path`, mas como essa rota não existe (vide `$ rake routes`), iremos criar uma e adicioná-la ao formulário.
 
-Em [config/routes.rb](config/routes.rb) (e dentro de `resources :products`):
+Em [config/routes.rb](rails/config/routes.rb) (e dentro de `resources :products`):
 
 ```ruby
 post 'purchase', to: 'purchases#create', as: :create_purchase
 ```
 
-Em [app/views/purchases/new.html.erb](app/views/purchases/new.html.erb):
+Em [app/views/purchases/new.html.erb](rails/app/views/purchases/new.html.erb):
 
 ```html
 <%= simple_form_for @purchase, url: products_create_purchase_path(@product) do |f| %>
@@ -426,7 +426,7 @@ Agora tudo ok :tada:! Conseguimos realizar vendas para cada produto. Rode o serv
 
 Só que a ação de venda não ocorre como esperávamos, por dois motivos: conseguimos vender produtos com quantidades negativas e o nosso estoque não está sendo atualizado.
 
-Adicionamos a validação no _model_ de `Purchases` ([app/models/purchase.rb](app/models/purchase.rb)):
+Adicionamos a validação no _model_ de `Purchases` ([app/models/purchase.rb](rails/app/models/purchase.rb)):
 
 ```ruby
 validates :quantity, numericality: { only_integer: true, greater_than: 0 }
