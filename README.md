@@ -16,11 +16,11 @@ Diagrama do Banco de Dados:
 
 ## Tutorial
 
-### Ruby
+## Ruby
 
 Utilize o [TryRuby.org](http://tryruby.org/) para se familiarizar com a sintaxe do Ruby!
 
-### Rails
+## Rails
 
 Rails é um framework escrito em Ruby. Para isso, precisamos ter o Ruby instalado (para Linux/Mac, eu utilizo o [RVM](https://rvm.io/); para Windows, tem o [Rails Installer](http://www.railsinstaller.org/pt-BR)). Após isso, podemos instalar o Rails:
 
@@ -103,6 +103,8 @@ Para efetuar essas alterações, utilizaremos uma rake:
 $ rake db:migrate
 ```
 
+A execução dessa _rake_ altera o nosso arquivo [db/schema.rb](db/schema.rb). Esse arquivo sempre vai conter um esqueleto da situação atual do banco, então todas as migrações que alteram o banco serão refletidas nesse arquivo.
+
 Agora que temos os modelos criados e definidos, é possível utilizar o _Rails Console_ parar adicionar dados ao banco.
 
 ```
@@ -117,45 +119,68 @@ irb(main):001:0> Product.create(weight: 250, roast: 'dark', ground: 'medium', pr
 => #<Product id: 1, weight: 250, roast: "dark", ground: "medium", price: 22.0, quantity: 200, created_at: "2017-11-24 00:21:17", updated_at: "2017-11-24 00:21:17">
 ```
 
+E todas essas alterações são conteúdo para mais um commit :D é bom sempre checar a situação atual utilizando o `git status`.
+
+```
+$ git status
+On branch master
+  Untracked files:
+    (use "git add <file>..." to include in what will be committed)
+
+    app/models/product.rb
+    app/models/purchase.rb
+    db/migrate/
+    db/schema.rb
+    test/fixtures/products.yml
+    test/fixtures/purchases.yml
+    test/models/purchase_test.rb
+
+nothing added to commit but untracked files present (use "git add" to track)
+$ git add .
+$ git commit -m "Adicionados modelos de product e purchase"
+```
+
+## Listagem do estoque
+
 Para construir (agora de verdade) a aplicação, iremos começar pela definição das rotas. Rotas são basicamente as URLs que permitem que a gente acesse diferentes páginas da aplicação.
 
-As rotas são definidas no arquivo `config/routes.rb`. Como já sabemos que queremos fazer um CRUD para `coffee`, utilizaremos um método chamado `resources`, que nos permite gerar rotas para essas ações, (link para arquivo de rotas). Ao gerar os _resources_ para `coffee`, podemos ver quais são as rotas disponíveis no sistema:
+As rotas são definidas no arquivo [config/routes.rb](config/routes.rb). Como já sabemos que queremos fazer um CRUD para `product` (que é o café <3), utilizaremos um método chamado `resources`, que nos permite gerar rotas para essas ações ([mais sobre rotas nos guias do Rails](http://guides.rubyonrails.org/routing.html#resources-on-the-web)). Ao gerar os _resources_ para `product`, podemos ver quais são as rotas disponíveis no sistema:
 
 ```
 $ rake routes
-Prefix Verb   URI Pattern                       Controller#Action
-coffee_index  GET    /coffee(.:format)          coffee#index
-              POST   /coffee(.:format)          coffee#create
-new_coffee    GET    /coffee/new(.:format)      coffee#new
-edit_coffee   GET    /coffee/:id/edit(.:format) coffee#edit
-coffee        GET    /coffee/:id(.:format)      coffee#show
-              PATCH  /coffee/:id(.:format)      coffee#update
-              PUT    /coffee/:id(.:format)      coffee#update
-              DELETE /coffee/:id(.:format)      coffee#destroy
+Prefix        Verb   URI Pattern                  Controller#Action
+products      GET    /products(.:format)          products#index
+              POST   /products(.:format)          products#create
+new_product   GET    /products/new(.:format)      products#new
+edit_product  GET    /products/:id/edit(.:format) products#edit
+product       GET    /products/:id(.:format)      products#show
+              PATCH  /products/:id(.:format)      products#update
+              PUT    /products/:id(.:format)      products#update
+              DELETE /products/:id(.:format)      products#destroy
 ```
 
-Cada linha dessa saída nos indica, respectivamente, qual o método que a gente utiliza para acessar essa rota (e.g. de acordo com a primeira linha, podemos utilizar o método `coffee_index_path` ou `coffee_index_url` para ter ter acesso a URI da listagem de `coffee`), qual o verbo HTTP essa requisição utiliza (mais sobre VERBOS HTTP E ONDE UTILIZAOS, AQUI` e qual ação do _controller_ é utilizada para executar essa ação, nesse caso, teremos um `CoffeesController` com um método `index` que irá processar essa requisição.
+Cada linha dessa saída nos indica, respectivamente, qual o método que a gente utiliza para acessar essa rota (e.g. de acordo com a primeira linha, podemos utilizar o método `products_path` ou `products_url` para ter ter acesso a URI da listagem de `products`), qual o verbo HTTP essa requisição utiliza e qual ação do _controller_ é utilizada para executar essa ação, nesse caso, teremos um `ProductsController` com um método `index` que irá processar essa requisição.
 
 Já que temos uma rota para acessar, podemos testá-la! Ao executar o servidor, tente acessar alguma dessas rotas. Vai dar erro, mas é ok porque ainda não existe um _controller_ para processar isso (é sempre bom ver dar erro ao invés de já ir fazendo o que você julga estar faltando, vai dar uma ideia melhor do que está acontecendo).
 
 Para gerar um _controller_, iremos utilizar um comando o rails:
 ```
-$ rails generate controller coffees
+$ rails generate controller products
 Running via Spring preloader in process 31397
-create  app/controllers/coffees_controller.rb
+create  app/controllers/products_controller.rb
 invoke  erb
-create    app/views/coffees
+create    app/views/products
 invoke  test_unit
-create    test/controllers/coffees_controller_test.rb
+create    test/controllers/products_controller_test.rb
 invoke  helper
-create    app/helpers/coffees_helper.rb
+create    app/helpers/products_helper.rb
 invoke    test_unit
-create      test/helpers/coffees_helper_test.rb
+create      test/helpers/products_helper_test.rb
 invoke  assets
 invoke    coffee
-create      app/assets/javascripts/coffees.js.coffee
+create      app/assets/javascripts/products.js.coffee
 invoke    scss
-create      app/assets/stylesheets/coffees.css.scss
+create      app/assets/stylesheets/products.css.scss
 ```
 
 Essa é uma boa hora para reiniciar o servidor, já que novos arquivos não são carregados quando o servidor já está rodando. Para isso, pressione `Ctrl+C` na janela do terminal que o processo está sendo executado e execute `$ rails server` novamente.
@@ -166,25 +191,25 @@ Iremos (novamente) ignorar os arquivos gerados na pasta `/test`. O conteúdo da 
 
 Por hora, iremos mexer no arquivo gerado em `app/controllers` e criaremos arquivos HTML em `app/views/coffee`.
 
-A primeira ação que iremos construir é a de listar. Aproveitaremos os registros criados através do _rails console_ para listar.
+A primeira ação que iremos construir é a de listar. Aproveitaremos os registros criados através do _rails console_ para ter algo pra mostrar.
 
-Em `app/controllers/coffees_controller.rb', criaremos um método `index` (igual aquele definido nas rotas) e iremos carregar todos os registros salvos no banco:
+Em [app/controllers/products_controller.rb](app/controllers/products_controller.rb), criaremos um método `index` (igual aquele definido nas rotas) e iremos carregar todos os registros salvos no banco:
+
 ```ruby
 def index
-  @coffees = Coffee.all
+  @products = Product.all
 end
 ```
 
-Utilizar o método `Coffee.all` é o equivalente a fazer uma consulta no banco. O retorno é uma lista de objetos do tipo `Coffee`.
+Utilizar o método `Product.all` é o equivalente a fazer uma consulta no banco. O retorno é uma lista de objetos do `ActiveRecord` com registros do tipo `Product`.
+
+```sql
+SELECT * FROM products;
 ```
-SELECT * FROM coffees;
-```
 
-Adicionamos esses registros à uma variável `@coffees`, que possui esse `@` por ser uma variável de instância (LINK PARA VARIAVEL DE INSTANCIA E CLASSE), e conseguimos acessá-la na view.
+Adicionamos esses registros à uma variável `@products`, que possui esse `@` por ser uma variável de instância ([mais sobre variáveis de classe e instância aqui](https://blog.guilhermegarnier.com/2014/02/variaveis-de-classe-e-de-instancia-de-classe-em-ruby/)) e conseguimos acessá-la na _view_.
 
-Por padrão, o Rails irá redirecionar para um arquivo em `app/views/<nome do controller>/<nome da ação>.html.erb`, que no nosso caso é `app/views/coffees/index.html.erb`. A extensão '.erb` SIGNIFICA ALGO AI e conseguimos, através de  QUAL O NOME DISSO? `<%= %>` utilizar Ruby dentro do HTML.
-
-Essa view irá conter uma tabela com todos os registro, como você pode ver [aqui](CAMINHO DO ARQUIVO).
+Por padrão, depois de processar o _SELECT_ o Rails irá redirecionar método para um arquivo em `app/views/<nome do controller>/<nome da ação>.html.erb`, que no nosso caso é [app/views/products/index.html.erb](app/views/products/index.html.erb). Os arquivos HTML com extensão `.erb` (Embedded RuBy) nos permitem utilizar código Ruby dentro do HTML com a ajuda de `<%= %>` ([mais sobre ActionView templates aqui](http://api.rubyonrails.org/classes/ActionView/Base.html)).
 
 Todas alterações que fizemos na listagem também são conteúdo para mais um commit! Podemos adicionar todos os arquivos e fazer um novo commit com os seguintes comandos:
 ```
@@ -192,9 +217,9 @@ $ git add .
 $ git commit -m "Adicionados recursos para listagem dos registros em Coffee"
 ```
 
-### Adicionando um produto no estoque
+## Adicionando um produto no estoque
 
-Agora que temos a listagem, próximo passo é criar uma forma de adicionarmos novos registros através de um formulário. Como as rotas já estão prontas, iremos direto para o _controller_.
+Agora que temos a listagem, próximo passo é criar uma maneirao do usuário adicionar novos registros através de um formulário. Como as rotas já estão prontas, iremos direto para o _controller_.
 
 A ação de criação envolve duas etapas:
 - abrir uma página com o formulário vazio;
