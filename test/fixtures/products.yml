@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  weight: 1
+  roast: MyString
+  ground: MyString
+  price: 1.5
+  quantity: 1
+
+two:
+  weight: 1
+  roast: MyString
+  ground: MyString
+  price: 1.5
+  quantity: 1
