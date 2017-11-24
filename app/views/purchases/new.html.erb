@@ -1,0 +1,4 @@
+<%= simple_form_for @purchase, url: product_create_purchase_path(@product) do |f| %>
+  <%= f.input :quantity %>
+  <%= f.button :submit %>
+<% end %>
