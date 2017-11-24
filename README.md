@@ -185,7 +185,7 @@ create      app/assets/stylesheets/products.css.scss
 
 Essa é uma boa hora para reiniciar o servidor, já que novos arquivos não são carregados quando o servidor já está rodando. Para isso, pressione `Ctrl+C` na janela do terminal que o processo está sendo executado e execute `$ rails server` novamente.
 
-Assim como o gerador de _models_, foram criados muitos arquivos que não iremos utilizar. Uma opção para evitar isso é criar o _controller_ manualmente (é o que eu - e acho que muita gente - faz no dia-a-dia) ou configurar os geradores para fazer algo mais útil (LINKS).
+Assim como o gerador de _models_, foram criados muitos arquivos que não iremos utilizar. Uma opção para evitar isso é criar o _controller_ manualmente (é o que eu - e acho que muita gente - faz no dia-a-dia) ou [configurar os geradores](http://guides.rubyonrails.org/generators.html) para fazer algo mais útil.
 
 Iremos (novamente) ignorar os arquivos gerados na pasta `/test`. O conteúdo da pasta `app/assets`, é referente CSS e JS, o padrão do Rails é utilizar CoffeeScript (mas não tenho muita certeza se a comunidade continua utilizando tanto isso) e SASS, por isso vem com essas extensões estranhas, mas não iremos alterar esses arquivos também. O arquivo gerado em `app/helper` é utilizado para colocarmos lógica da _view_ que não queremos que fique no HTML nem no _model_ (que é onde algumas pessoas acabam colocando).
 
@@ -209,13 +209,15 @@ SELECT * FROM products;
 
 Adicionamos esses registros à uma variável `@products`, que possui esse `@` por ser uma variável de instância ([mais sobre variáveis de classe e instância aqui](https://blog.guilhermegarnier.com/2014/02/variaveis-de-classe-e-de-instancia-de-classe-em-ruby/)) e conseguimos acessá-la na _view_.
 
-Por padrão, depois de processar o _SELECT_ o Rails irá redirecionar método para um arquivo em `app/views/<nome do controller>/<nome da ação>.html.erb`, que no nosso caso é [app/views/products/index.html.erb](app/views/products/index.html.erb). Os arquivos HTML com extensão `.erb` (Embedded RuBy) nos permitem utilizar código Ruby dentro do HTML com a ajuda de `<%= %>` ([mais sobre ActionView templates aqui](http://api.rubyonrails.org/classes/ActionView/Base.html)).
+Por padrão, depois de processar o _SELECT_, irá redirecionar método para um arquivo em `app/views/<nome do controller>/<nome da ação>.html.erb`, que no nosso caso é [app/views/products/index.html.erb](app/views/products/index.html.erb). Os arquivos HTML com extensão `.erb` (Embedded RuBy) nos permitem utilizar código Ruby dentro do HTML com a ajuda de `<%= %>` ([mais sobre ActionView templates aqui](http://api.rubyonrails.org/classes/ActionView/Base.html)).
 
 Todas alterações que fizemos na listagem também são conteúdo para mais um commit! Podemos adicionar todos os arquivos e fazer um novo commit com os seguintes comandos:
 ```
 $ git add .
 $ git commit -m "Adicionados recursos para listagem dos registros em Coffee"
 ```
+
+Lembre-se de visualizar as suas alterações no browser! Acesse [localhost:3000/products](http://localhost:3000/products) pra ver essa listagem.
 
 ## Adicionando um produto no estoque
 
@@ -226,40 +228,53 @@ A ação de criação envolve duas etapas:
 - receber esses dados, persistir no banco e retornar mensagem de sucesso (ou erro) pro usuário.
 
 Para a primeira etapa, criaremos um método `new` no _controller_ e iremos iniciar um objeto `Coffee`.
-```
+
+```ruby
 def new
-  @coffee = Coffee.new
+  @product = Product.new
 end
 ```
 
-Repare que agora temos uma variável `@coffee`, que como armazena apenas um objeto de `Coffee` - ao invés de `@coffees` que armazenava um _array_ -, temos uma variável no singular. Isso irá ajudar na leitura do código, onde uma variável no singular guarda somente um elemento e uma variável no plural guarda um array.
+Repare que agora temos uma variável `@product`, que como armazena apenas um objeto de `Product` - ao invés de `@products` que armazenava um _array_ -, temos uma variável no singular. Isso irá ajudar na leitura do código, onde uma variável no singular guarda somente um elemento e uma variável no plural guarda um array (apenas convenção, isso não muda nada pro interpretador).
 
-Para criar o formulário, iremos editar o arquivo `app/views/coffees/new.html.erb` e utilizaremos o `form_for` que já vem junto com o Rails. Uma alternativa é utilizar a _gem_ [SimpleForm]().
+Para criar o formulário, iremos editar o arquivo [app/views/products/new.html.erb](app/views/products/new.html.erb) e utilizaremos a _gem_ [SimpleForm](https://github.com/plataformatec/simple_form) para poder criar um formulário.
+
+Antes de editar o arquivo, teremos que instalar a gem. Para isso, é só seguir os [passos de instalação que estão no repositório do SimpleForm](https://github.com/plataformatec/simple_form#installation) - e isso já é conteúdo para outro commit. Voltando ao arquivo, criamos um formulário seguindo os [passos iniciais indicados no repositório](https://github.com/plataformatec/simple_form#usage). **Fica como dever de casa customizar mais esse formulário, uma coisa legal seria fazer os campos de _ground_ e _roast_ serem um select, já que são especificações pré-definidas (e.g. a torra pode ser clara, média ou escura).**
 
 ```
+<%= simple_form_for @product do |f| %>
+  <%= f.input :weight %>
+  <%= f.input :roast %>
+  <%= f.input :ground %>
+  <%= f.input :price %>
+  <%= f.input :quantity %>
+  <%= f.button :submit %>
+<% end %>
 ```
 
-explicar aa
+Ao clicar no botão de enviar, irá retornar um erro pois o form faz uma requisição para uma rota do tipo POST do formulário. Isso acontece pois o objeto em `@coffee` ainda não foi persistido - ele não possui um `id` -, caso contrário, a requisição iria para a rota em PUT/PATCH (nao sei qual :P).
 
-Ao clicar no botão de enviar, irá retornar um erro pois o form faz uma requisição para a rota POST (ver mais detalhes disso aaa 0 como explicar::). Isso acontece pois o objeto em `@coffee` ainda não foi persistido - ele não possui um `id` -, caso contrário, a requisição iria para a rota em PUT/PATCH (nao sei qual :P). N"ao ire abordar isso, então fica como lição de casa.
+Antes de criar um registro no banco com os dados do formulário, por questões de segurança, iremos utilizar o [strong params](http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters) para validar as keys dos parâmetros, isso impede que atributos mais sensiveis do modelo sejam atualizados. Para isso,
 
-No controller, 
-   Temos que tratar os parãmetros recebidos - utilizaremos o Rails Parameter aaa STRONG PARAMS 
-   ```
-   def coffee_params
-   end
-   ```
+```
+def product_params
+  params.require(:product).permit(:weight, :roast, :ground, :price, :quantity)
+end
+```
 
-Agora utilizaremos o retorno desse método para criar um novo objeto de `Coffee` e iremos persistir no banco.
+O retorno desse método é um `Hash`, que conseguimos passar como parâmetros para o `Product.new` ou `Product.create`.
+
 ```
 def create
-  @coffee = Coffee.new(coffee_params)
+  @product = Product.new(product_params)
 
   # o método `save` retorna true/false referente ao objeto ter sido persistido ou não.
-  if @coffee.save
-    aaaJ
+  if @product.save
+    # se der tudo ok, a gente redireciona pra listagem. ~lição de casa: adicionar flash messages
+    redirect_to products_path
   else
-    aaa
+    # irá renderizar o conteúdo de 'new', mas como o objeto `@product` possui coisas em `@product.errors`, algumas mensagens de erro serão renderizadas.
+    render :new
   end
 end
 ```
