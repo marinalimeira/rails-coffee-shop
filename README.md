@@ -22,76 +22,85 @@ Utilize o [TryRuby.org](http://tryruby.org/) para se familiarizar com a sintaxe 
 
 ### Rails
 
-Rails é um framework escrito em Ruby. Para isso, precisamos ter o Ruby instalado (para Linux/Mac, eu utilizo o RVM; para Windows, tem o [RailsInstaller]()). Após isso, podemos instalar o Rails:
+Rails é um framework escrito em Ruby. Para isso, precisamos ter o Ruby instalado (para Linux/Mac, eu utilizo o [RVM](https://rvm.io/); para Windows, tem o [Rails Installer](http://www.railsinstaller.org/pt-BR)). Após isso, podemos instalar o Rails:
 
 ```
 $ gem install rails
 ```
 
-Dependendo da nossa versão do Ruby, o Rails instalado será v4 ou v5. Existem diferenças consideráveis entre as duas, mas isso não irá afeter a nossa aplicação.
-Com a gem do Rails instalada, podemos utilizar os comandos `$ rails <alguma coisa>`. Para criar uma aplicação:
+Dependendo da nossa versão do _Ruby_, a versão do _Rails_ instalado será 4.x.x ou 5.x.x. Existem diferenças consideráveis entre as duas, mas isso não irá afeter a nossa aplicação.
+Com a _gem_ do _Rails_ instalada, podemos utilizar os comandos `$ rails <alguma coisa>`. Para criar nossa aplicação chamada _CoffeeShop_:
 
 ```
 $ rails new coffee_shop
 ```
 
-EXECUTAR RAILS SERVER - TEM QUE DAR SUCESSO
-
 Isso irá criar uma pasta com todas as dependências do projeto e irá executar o `bundle install`, esse comando instala todas as *gems* padrões do Rails, que são definidas no arquivo `Gemfile`.
 
-Como temos uma aplicação criada e as gems instaladas, podemos iniciar o servidor e checar se está tudo ok:
+Como temos uma aplicação criada e as gems instaladas, podemos entrar na pasta do projeto, iniciar o servidor e checar se está tudo ok:
+
 ```
+$ cd coffee_shop
 $ rails server
 ```
 
-Você pode acessar o servidor acessando [localhost:3000](http://localhost:3000). A criação da estrutura inicial do projeto é um commit LINKAR PARA GIT COMMIT EM PT!
+Você pode acessar o servidor acessando [localhost:3000](http://localhost:3000).
 
-Para isso, criaremos um repositório na pasta do projeto:
+A criação da estrutura inicial do projeto é alteração sufiente para criarmos um [commit](https://git-scm.com/docs/git-commit) (não que exista limite min/máx de alterações necessárias para um commit ¯\_(ツ)_/¯). Para isso, criaremos um repositório na pasta do projeto:
+
 ```
 $ git init
 ```
 
 Você pode adicionar todos os arquivos e criar um commit chamado "Estrutura inicial" com os seguintes comandos:
+
 ```
 $ git add .
 $ git commit -m "Estrutura inicial"
 ```
 
-Voltando a falar do projeto, iremos utilizar as configurações padrões, logo, utilizaremos SQLite para gerenciamento do banco de dados - com isso, não iremos nos preocupar em configurar conexão nem instalar o PostgreSQL.
+Voltando a falar do projeto, iremos utilizar as configurações padrões. Logo, utilizaremos SQLite para gerenciamento do banco de dados - com isso, não iremos nos preocupar em configurar conexão nem instalar o PostgreSQL.
 
-Para iniciar o desenvolvimento da nossa aplicação, iremos criar os modelos (models) que serão abstrações das tabelas no banco de dados. Assim como visto pela modelagem inicial, teremos duas tabelas:
-- coffee e - aaaa
+Para iniciar o desenvolvimento da nossa aplicação, iremos criar os _models_ que serão abstrações das tabelas no banco de dados. Assim como visto pela modelagem inicial, teremos as tabelas `products` e `sales`.
 
 
 ```
-$ rails generate model coffee size:integer type darkness:
+$ rails generate model product weight:integer roast ground price:float quantity:integer
 ```
 
-Temos vários tipos de dados - MANDAR LINKS DO QUE É EM SQL E O QUE É EM RUBY' - definimos o tipo de cada atributo na criação do modelo.
+Serão criadas também as colunas `id`, `created_at` e `updated_at`, que são gerenciadas pelo `ActiveRecord` e essas duas últimas no formato de data.
 
-Obs.: Rails possui muitas configurações que são feitas através de convenções (_Convention Over Configuration_ === CADE LINKS:), por isso iremos construir todos os modelos, controladores etc em inglês, e como o plural em português é bem diferente do jeito que é feito em inglês, as coisas ficariam bem confusas se fizermos em português (e.g. se a gente tiver um modelo "papel" seria criado uma tabela "papels").
+Temos vários tipos de dados, onde definimos o tipo de cada atributo na criação do modelo - quando não especificamos nenhum, o tipo `string` é utilizado.
+
+**Obs.:** _Rails_ possui muitas configurações que são feitas através de [convenções](http://rubyonrails.org/doctrine/#convention-over-configuration), por isso iremos construir todos as _models_, _controllers_ etc em inglês, e como o plural em português é bem diferente do jeito que é feito em inglês, as coisas ficariam bem confusas se fizermos em português (e.g. se a gente tiver um modelo "papel" seria criado uma tabela "papels").
 
 A saída desse comando vai ser algo parecido com isso:
 ```
-Running via Spring preloader in process 31198
+Running via Spring preloader in process 14385
 invoke  active_record
-create    db/migrate/20171123121103_create_coffees.rb
-create    app/models/coffee.rb
+create    db/migrate/20171124001336_create_products.rb
+create    app/models/product.rb
 invoke    test_unit
-create      test/models/coffee_test.rb
-create      test/fixtures/coffees.yml
+create      test/models/product_test.rb
+create      test/fixtures/products.yml
 ```
 
-Iremos ignorar o que foi criado na pasta `test`, já que não iremos falar sobre (mas testes são essenciais em uma aplicação, então leia sobre isso!). O que nos interessa agora é o que está em `db/migrate` e em `app/models`.
+Iremos ignorar o que foi criado na pasta `test`, já que não iremos falar sobre (mas testes são essenciais em uma aplicação, então leia sobre isso!). O que nos interessa agora é o que está em `db/migrate/` e em `app/models/`.
 
-A migração gerada contem um script do `ActiveRecord` para criar a tabela `coffees` e seus atributos. Esse monte de número no início do nome do arquivo é o _timestamp_ do momento da criação da migração.
+A migração gerada contem um script do `ActiveRecord` para criar a tabela `products` e seus atributos. Esse monte de número no início do nome do arquivo é o _timestamp_ do momento da criação da migração.
 
-O arquivo do modelo (`app/models/coffee.rb`) só contem a definição da classe. É no modelo que iremos - em alguns instantes - definir os relacionamentos e as validações referentes a entidade `coffee`.
+O arquivo do model [app/models/product.rb](app/models/product.rb) só contem a definição da classe. É nesse arquivo que iremos - em alguns instantes - definir os relacionamentos e as validações referentes a entidade `product`.
 
 Repetiremos os mesmos passos para criar um modelo de `purchase`:
 
 ```
-$ rails g model purchase coffee_id:integer
+$ rails g model purchase product_id:integer quantity:integer total_price:float
+```
+
+Para efetuar essas alterações, utilizaremos uma rake:
+
+```
+$ rake db:migrate
 ```
 
 Agora que temos os modelos criados e definidos, é possível utilizar o _Rails Console_ parar adicionar dados ao banco.
@@ -100,10 +109,12 @@ Agora que temos os modelos criados e definidos, é possível utilizar o _Rails C
 $ rails console
 ```
 
-```
-> Coffeee.new
-> coffeee.create
-> Coffee.create(aaa:aaa:aa:)
+```bash
+irb(main):001:0> Product.create(weight: 250, roast: 'dark', ground: 'medium', price: 22, quantity: 200)
+  (0.1ms)  begin transaction
+  SQL (0.3ms)  INSERT INTO "products" ("weight", "roast", "ground", "price", "quantity", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?)  [["weight", 250], ["roast", "dark"], ["ground", "medium"], ["price", 22.0], ["quantity", 200], ["created_at", "2017-11-24 00:21:17.081579"], ["updated_at", "2017-11-24 00:21:17.081579"]]
+  (47.8ms)  commit transaction
+=> #<Product id: 1, weight: 250, roast: "dark", ground: "medium", price: 22.0, quantity: 200, created_at: "2017-11-24 00:21:17", updated_at: "2017-11-24 00:21:17">
 ```
 
 Para construir (agora de verdade) a aplicação, iremos começar pela definição das rotas. Rotas são basicamente as URLs que permitem que a gente acesse diferentes páginas da aplicação.
