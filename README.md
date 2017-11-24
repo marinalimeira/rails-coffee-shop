@@ -426,7 +426,7 @@ Agora tudo ok :tada:! Conseguimos realizar vendas para cada produto. Rode o serv
 
 Só que a ação de venda não ocorre como esperávamos, por dois motivos: conseguimos vender produtos com quantidades negativas e o nosso estoque não está sendo atualizado.
 
-Adicionamos a validação no _model_ de `Purchases` ([app/models/purchases.rb](app/models/purchases.rb)):
+Adicionamos a validação no _model_ de `Purchases` ([app/models/purchase.rb](app/models/purchase.rb)):
 
 ```ruby
 validates :quantity, numericality: { only_integer: true, greater_than: 0 }
