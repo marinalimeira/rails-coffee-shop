@@ -48,7 +48,7 @@ Vamos, então, criar nossa aplicação _CoffeeShop_:
 $ rails new coffee_shop
 ```
 
-Isso irá criar uma pasta com todas as dependências do projeto e irá executar, automaticamente, o `bundle install`. Esse comando instala todas as *gems* padrões do Rails, que são definidas no arquivo `Gemfile`.
+Isso irá criar uma pasta com todas as dependências do projeto e irá executar, automaticamente, o `bundle install`. Esse comando instala todas as *gems* padrões do Rails, que são definidas no arquivo [Gemfile](rails/Gemfile).
 
 Como temos uma aplicação criada e as gems instaladas, podemos entrar na pasta do projeto, iniciar o servidor e checar se está tudo ok:
 
