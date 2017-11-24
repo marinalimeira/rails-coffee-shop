@@ -13,7 +13,7 @@ Com estas funcionalidades, temos um **_CRUD_** (_Create_, _Read_, _Update_, _Del
 Diagrama do Banco de Dados:
 
 <p align="center">
-  <img src="docs/db_diagram.png" alt="Diagrama do Banco de Dados">
+  <img src="images/db_diagram.png" alt="Diagrama do Banco de Dados">
 </p>
 
 ## Tutorial
