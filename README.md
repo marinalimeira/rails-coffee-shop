@@ -30,7 +30,7 @@ Utilize o [TryRuby.org](http://tryruby.org/) para se familiarizar com a **sintax
 
 **3. Rails**
 
-Rails é um framework escrito em Ruby. Para isso, precisamos ter o Ruby instalado (para Linux/Mac, eu utilizo o [RVM](https://rvm.io/); para Windows, tem o [Rails Installer](http://www.railsinstaller.org/pt-BR)).
+Rails é um framework escrito em Ruby. Para isso, precisamos ter o Ruby instalado (para Linux/Mac, eu utilizo o [RVM](https://rvm.io/); para Windows, tem um guia de instalação em [INSTALL.md](INSTALL.MD)).
 
 Após a instalação do Ruby, podemos instalar o Rails:
 

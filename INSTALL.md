@@ -4,13 +4,15 @@
 
 Para instalar o Ruby, Git, Bundler e mais algumas coisinhas (de forma simples), eu recomendo o [Rails Installer](http://www.railsinstaller.org/pt-BR).
 
-O setup do Rails Installer é basicamente o "next > next > next" do windows. Vpcê precisará de aproximadamente 500MB livres em disco para isso.
+O setup do Rails Installer é basicamente o "next > next > next" do Windows. Você precisará de aproximadamente 500MB livres em disco para isso.
 
 Após o término da instalação, essa é a telinha de :sucesso::
 
-<imagem>
+<p align="center">
+<img src="images/rails_installer.png" alt="Finalização do Rails Installer">
+</p>
 
-Eu recomendo deixar selecionado o checkbox que pede para configurar o Git e o SSH. Após clicar em concluir, vai abrir um prompt pedindo suas informações do Git:
+Eu recomendo deixar selecionado o checkbox que pede para configurar o Git e o SSH. Se você deixar selecionado, após clicar em concluir, vai abrir um prompt pedindo para configurar seus dados no Git:
 
 ```
 # Rails Environment Configuration.
@@ -23,25 +25,34 @@ as GitHub (https://github.com/).
 name >
 ```
 
-Após inserir seu nome e e-mail (que serão as configs utilizadas a cada `git commit`, vai ser gerada uma chave SSH e a chave pública será copiada para a sua área de transferência. Agora é só vir no GitHub e colar essa chave nas configs, que você poderá realizar `$ git push` em seus repositórios sem precisar se estressar com configs de acesso :P
+Após inserir seu nome e e-mail (que serão as configs utilizadas a cada `$ git commit`, vai ser gerada uma chave SSH e a chave pública será copiada para a sua área de transferência. Agora é só vir no GitHub e [adicionar essa chave nas configs](https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/), que você poderá realizar `$ git push` em seus repositórios sem precisar se estressar com configs de acesso :P
 
-
-(TODO:CONFIG SSH KEYS)
 Agora para checarmos se a instalação ocorreu bem, utilizaremos esse mesmo prompt para criar e executar um servidor.
 
 ```
-$ rails new testando_instalacao
+$ rails new potato
 ```
-O bundle install será executado e o setup inicial será feito. Agora entre na pasta do projeto e execute o servidor!
+
+(potato é um nome aleatório que eu escolhi para o app)
+
+O `bundle install` será executado e o setup inicial será feito. Agora entre na pasta do projeto e execute o servidor!
 
 ```
-$ cd testando_instalacao
+$ cd potato
 $ rails server
 ```
 
-Dependendo das suas configurações de firewall, será necessário permitir o acesso do servidor na rede, então talvez apareça uma janelinha assim:
+Dependendo das suas configurações de Firewall, será necessário permitir o acesso do servidor na rede, então talvez apareça uma janelinha assim:
+
+<p align="center">
+  <img src="images/rails_firewall.png" alt="Firewall do Windows">
+</p>
 
 É só clicar em ok e abrir o seu navegador favorito (de prefêrencia o [Firefox](https://www.mozilla.org/pt-BR/firefox/)) e acessar [localhost:3000](http://localhost:3000/).
+
+<p align="center">
+<img src="images/rails_sucesso.png" alt="Página inicial do Rails">
+</p>
 
 Os logs no prompt deverão estar mais ou menos assim:
 
@@ -65,8 +76,10 @@ Processing by Rails::WelcomeController#index as HTML
   Rendered c:/RailsInstaller/Ruby2.3.3/lib/ruby/gems/2.3.0/gems/railties-5.1.4/lib/rails/templates/rails/welcome/index.html.erb (3.0ms)
 Completed 200 OK in 151ms (Views: 15.6ms)
 ```
-Isso indica que iniciamos um servidor, ele roda na porta 3000 e que um request do tipo GET foi feito para `/`. Se não estiver assim, deu alguma treta :(
+
+Isso indica que iniciamos um servidor, ele roda na porta 3000 e que um request do tipo GET foi feito para `/`. Se não estiver assim, deu alguma treta :( nesse caso, recomendo abrir uma issue nesse repositório para que a gente possa discutir e te ajudar a eolucionar o problema!
 
 Precisaremos também de um editor de texto! [Atom](https://atom.io/) é sempre uma boa escolha ;)
 
-Agora tudo ok! :tada: Rails já está instalado e configurado na sua máquina :parrot:
+Agora tudo ok! :tada: Rails já está instalado e configurado na sua máquina ~:D
+
