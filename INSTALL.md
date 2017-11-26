@@ -9,7 +9,7 @@ O setup do Rails Installer é basicamente o "next > next > next" do Windows. Voc
 Após o término da instalação, essa é a telinha de :sucesso::
 
 <p align="center">
-<img src="images/rails_installer.png" alt="Finalização do Rails Installer">
+  <img src="images/rails_installer.png" alt="Finalização do Rails Installer">
 </p>
 
 Eu recomendo deixar selecionado o checkbox que pede para configurar o Git e o SSH. Se você deixar selecionado, após clicar em concluir, vai abrir um prompt pedindo para configurar seus dados no Git:
@@ -77,9 +77,10 @@ Processing by Rails::WelcomeController#index as HTML
 Completed 200 OK in 151ms (Views: 15.6ms)
 ```
 
-Isso indica que iniciamos um servidor, ele roda na porta 3000 e que um request do tipo GET foi feito para `/`. Se não estiver assim, deu alguma treta :( nesse caso, recomendo abrir uma issue nesse repositório para que a gente possa discutir e te ajudar a eolucionar o problema!
+Isso indica que iniciamos um servidor, ele roda na porta 3000 e que um request do tipo GET foi feito para `/`. Se não estiver assim, deu alguma treta :( nesse caso, recomendo abrir uma issue nesse repositório para que a gente possa discutir e te ajudar a solucionar o problema!
+
+Para conseguirmos utilizar os assets, precisamos [instalar o NodeJS](https://nodejs.org/en/download/). A versão recomendada é a LTS (Long Time Support - vai possuir suporte por mais tempo). - **ISSO NÃO FOI TESTADO AINDA**.
 
 Precisaremos também de um editor de texto! [Atom](https://atom.io/) é sempre uma boa escolha ;)
 
-Agora tudo ok! :tada: Rails já está instalado e configurado na sua máquina ~:D
-
+Agora tudo ok! :tada: Rails já está instalado e configurado na sua máquina ~:D Divirta-se!
