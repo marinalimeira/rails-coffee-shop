@@ -16,6 +16,18 @@ Diagrama do Banco de Dados:
   <img src="images/db_diagram.png" alt="Diagrama do Banco de Dados">
 </p>
 
+### Product
+- weight: peso do pacote
+- roast: tipo de moagem (mais fino ou mais grosso)
+- ground: tipo de torra (café mais claro ou mais escuro)
+- price: preço do pacote
+- quantidade: quantidade em estoque
+
+### Sale
+- product_id: ID do `Product` que foi vendido
+- quantity: quantidade vendida (será descontado do estoque)
+- total_price: quantidade vendida * preço do pacote
+
 ## Tutorial
 
 ## Requisitos
