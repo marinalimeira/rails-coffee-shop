@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
+  root 'products#index'
+
   resources :products do
-    get 'purchase', to: 'purchases#new', as: :new_purchase
-    post 'purchase', to: 'purchases#create', as: :create_purchase
+    get 'sales/new', to: 'sales#new'
+    post 'sales', to: 'sales#create'
   end
 end

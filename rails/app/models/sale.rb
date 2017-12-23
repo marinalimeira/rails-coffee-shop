@@ -1,4 +1,4 @@
-class Purchase < ApplicationRecord
+class Sale < ApplicationRecord
   belongs_to :product
 
   validates :quantity, numericality: { only_integer: true, greater_than: 0 }

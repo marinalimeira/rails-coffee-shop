@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20171124002634) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "purchases", force: :cascade do |t|
+  create_table "sales", force: :cascade do |t|
     t.integer  "product_id"
     t.integer  "quantity"
     t.float    "total_price"

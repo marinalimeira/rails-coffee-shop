@@ -1,3 +1,4 @@
+<%= link_to "Novo produto", new_product_path %>
 <table>
   <tr>
     <th>Tipo de torra</th>
@@ -5,6 +6,8 @@
     <th>Peso</th>
     <th>Preço</th>
     <th>Quantidade em estoque</th>
+    <th></th>
+    <th></th>
   </tr>
   <% @products.each do |product| %>
     <tr>
@@ -13,6 +16,8 @@
       <td><%= product.weight %></td>
       <td><%= product.price %></td>
       <td><%= product.quantity %></td>
+      <td><%= link_to "Realizar venda", product_sales_new_path(product) %></td>
+      <td><%= link_to "Excluir produto", product_path(product), method: :delete %></td>
     <tr>
   <% end %>
 </table>
